@@ -20,7 +20,7 @@
     "compodoc:mf-users": "npm --prefix Microfrontend-Users-Angular run compodoc",
     "compodoc:mf-products": "npm --prefix Microfrontend-Products-Angular run compodoc",
     "compodoc:mf-movies": "npm --prefix Microfrontend-Movies-Angular run compodoc",
-    "test": "concurrently --names \"HOST,MF-USERS,MF-PRODS,MF-MOVIES\" \"npm:test:host\" \"npm:test:mf-users\" \"npm:test:mf-products\" \"npm:test:mf-movies\"",
+    "test": "npm run test:host && npm run test:mf-users && npm run test:mf-products && npm run test:mf-movies",
     "test:host": "npm --prefix Client-Host-Angular run test",
     "test:mf-users": "npm --prefix Microfrontend-Users-Angular run test",
     "test:mf-products": "npm --prefix Microfrontend-Products-Angular run test",
