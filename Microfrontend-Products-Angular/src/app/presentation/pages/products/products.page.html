@@ -1,0 +1,53 @@
+<section class="container my-3">
+  <h3 class="mb-3">Microfrontend de Productos</h3>
+
+  <div class="d-flex flex-wrap gap-3 align-items-end mb-3">
+    <button type="button" class="btn btn-primary" (click)="loadAll()">
+      <i class="bi bi-list-ul"></i> Listar todos
+    </button>
+
+    <div class="d-flex gap-2 align-items-end">
+      <div>
+        <label class="form-label mb-1" for="productId">Buscar por Id</label>
+        <input
+          id="productId"
+          type="number"
+          min="1"
+          class="form-control"
+          [(ngModel)]="productId" />
+      </div>
+      <button type="button" class="btn btn-secondary" (click)="loadById()">
+        <i class="bi bi-search"></i> Buscar
+      </button>
+    </div>
+
+    <div class="d-flex gap-2 align-items-end">
+      <div>
+        <label class="form-label mb-1" for="category">Filtrar por Categoría</label>
+        <select
+          id="category"
+          class="form-select"
+          [(ngModel)]="category">
+          @for (cat of categories; track cat) {
+            <option [ngValue]="cat">{{ cat }}</option>
+          }
+        </select>
+      </div>
+      <button type="button" class="btn btn-success" (click)="loadByCategory()">
+        <i class="bi bi-funnel"></i> Filtrar
+      </button>
+    </div>
+  </div>
+
+  @switch (state) {
+    @case ('loading') {
+      <app-alert alertState="loading" text="Cargando Productos..."></app-alert>
+    }
+    @case ('error') {
+      <app-alert alertState="error" text="Error al Cargar los Productos"></app-alert>
+    }
+    @case ('success') {
+      <app-products-table [products]="products"></app-products-table>
+    }
+  }
+</section>
