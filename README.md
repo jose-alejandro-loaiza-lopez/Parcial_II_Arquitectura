@@ -214,13 +214,16 @@ npm start
 ```
 
 Levanta al mismo tiempo los tres microfrontends (`4201`, `4202`, `4203`) y el host
-(`4200`) usando `concurrently`. Abre **http://localhost:4200**.
+(`4200`) usando `concurrently`. El host **espera a que los tres remotos estén disponibles**
+(sus `remoteEntry.js`) antes de arrancar y, al terminar de compilar, **abre automáticamente
+el navegador en http://localhost:4200**.
 
 Otros scripts de la raíz:
 
 ```bash
 npm test            # pruebas unitarias de los cuatro proyectos
 npm run build       # build de producción de los cuatro proyectos
+npm run compodoc    # genera la documentación de los cuatro proyectos y la abre
 ```
 
 ### Opción 2 — Cada proyecto por separado
@@ -301,10 +304,27 @@ servir cada `dist/` y ajustar dichas URLs en `Client-Host-Angular/src/app/app.ro
 
 ## 📚 Documentación (Compodoc)
 
-Cada proyecto incluye JSDoc por capas y puede generar documentación con Compodoc:
+Cada proyecto incluye JSDoc por capas y puede generar documentación con Compodoc. Al
+terminar, **el comando abre automáticamente el `documentation/index.html` generado** en el
+navegador.
+
+Desde la raíz del monorepo (genera y abre la de los cuatro proyectos):
+
+```bash
+npm run compodoc
+```
+
+O por proyecto:
 
 ```bash
 cd Microfrontend-Users-Angular && npm run compodoc
+```
+
+El resultado queda en `documentation/index.html` dentro de cada proyecto. Si prefieres
+levantarlo con un servidor en vivo (no termina el comando):
+
+```bash
+npx compodoc -p tsconfig.doc.json -s -o
 ```
 
 ---
