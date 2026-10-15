@@ -266,30 +266,42 @@ Cada proyecto usa **Jest** (`jest-preset-angular`) con cobertura habilitada y su
 **90%** exigido (los microfrontends alcanzan **100%**).
 
 ```bash
-# Ejecutar pruebas
+# Desde la raíz del monorepo: ejecuta las pruebas de los cuatro proyectos
+npm test
+
+# Por proyecto
 cd Microfrontend-Users-Angular && npm test
 
-# Ejecutar con reporte de cobertura
+# Ejecutar con reporte de cobertura (por proyecto)
 cd Microfrontend-Users-Angular && npm run test:coverage
 
-# Modo watch
+# Modo watch (por proyecto)
 cd Microfrontend-Users-Angular && npm run test:watch
 ```
+
+> `npm test` en la raíz ejecuta los proyectos **uno tras otro (no en paralelo)** para evitar
+> que los cuatro procesos de Jest agoten la memoria. Resultado esperado: **137 pruebas**
+> (5 del host + 44 × 3 microfrontends), todas en verde.
 
 El reporte HTML queda en `coverage/` dentro de cada proyecto.
 
 | Proyecto | Pruebas | Cobertura |
 |---|---|---|
-| `Client-Host-Angular` | ✅ | 100% |
+| `Client-Host-Angular` | 5 | 100% |
 | `Microfrontend-Users-Angular` | 44 | 100% |
 | `Microfrontend-Products-Angular` | 44 | 100% |
 | `Microfrontend-Movies-Angular` | 44 | 100% |
+| **Total** | **137** | **100%** |
 
 ---
 
 ## 🏗️ Build de producción
 
 ```bash
+# Desde la raíz del monorepo: compila los cuatro proyectos
+npm run build
+
+# O por proyecto
 cd Client-Host-Angular && npm run build
 cd Microfrontend-Users-Angular && npm run build
 cd Microfrontend-Products-Angular && npm run build
