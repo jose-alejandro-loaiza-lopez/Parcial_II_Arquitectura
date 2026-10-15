@@ -11,10 +11,15 @@
     "install:mf-products": "npm --prefix Microfrontend-Products-Angular install",
     "install:mf-movies": "npm --prefix Microfrontend-Movies-Angular install",
     "start": "concurrently --kill-others --names \"MF-USERS,MF-PRODS,MF-MOVIES,HOST\" \"npm:start:mf-users\" \"npm:start:mf-products\" \"npm:start:mf-movies\" \"npm:start:host\"",
-    "start:host": "npm --prefix Client-Host-Angular run start",
+    "start:host": "wait-on --timeout 180000 http://localhost:4201/remoteEntry.js http://localhost:4202/remoteEntry.js http://localhost:4203/remoteEntry.js && npm --prefix Client-Host-Angular run start",
     "start:mf-users": "npm --prefix Microfrontend-Users-Angular run start",
     "start:mf-products": "npm --prefix Microfrontend-Products-Angular run start",
     "start:mf-movies": "npm --prefix Microfrontend-Movies-Angular run start",
+    "compodoc": "concurrently --names \"HOST,MF-USERS,MF-PRODS,MF-MOVIES\" \"npm:compodoc:host\" \"npm:compodoc:mf-users\" \"npm:compodoc:mf-products\" \"npm:compodoc:mf-movies\"",
+    "compodoc:host": "npm --prefix Client-Host-Angular run compodoc",
+    "compodoc:mf-users": "npm --prefix Microfrontend-Users-Angular run compodoc",
+    "compodoc:mf-products": "npm --prefix Microfrontend-Products-Angular run compodoc",
+    "compodoc:mf-movies": "npm --prefix Microfrontend-Movies-Angular run compodoc",
     "test": "concurrently --names \"HOST,MF-USERS,MF-PRODS,MF-MOVIES\" \"npm:test:host\" \"npm:test:mf-users\" \"npm:test:mf-products\" \"npm:test:mf-movies\"",
     "test:host": "npm --prefix Client-Host-Angular run test",
     "test:mf-users": "npm --prefix Microfrontend-Users-Angular run test",
@@ -27,6 +32,7 @@
     "build:mf-movies": "npm --prefix Microfrontend-Movies-Angular run build"
   },
   "devDependencies": {
-    "concurrently": "^9.1.0"
+    "concurrently": "^9.1.0",
+    "wait-on": "^8.0.0"
   }
 }

@@ -2,12 +2,12 @@
   "name": "client-host-angular",
   "version": "0.0.0",
   "scripts": {
-    "start": "ng serve",
+    "start": "ng serve --open",
     "build": "ng build",
     "test": "jest",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
-    "compodoc": "npx compodoc -p tsconfig.doc.json",
+    "compodoc": "npx compodoc -p tsconfig.doc.json && start \"\" documentation/index.html",
     "run:all": "node node_modules/@angular-architects/module-federation/src/server/mf-dev-server.js"
   },
   "prettier": {
