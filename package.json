@@ -1,0 +1,32 @@
+{
+  "name": "parcial-ii-microfrontends",
+  "version": "1.0.0",
+  "description": "Parcial II - Punto 1: Arquitectura de microfrontends con Angular y Module Federation",
+  "private": true,
+  "scripts": {
+    "postinstall": "npm run install:all",
+    "install:all": "concurrently --names \"HOST,MF-USERS,MF-PRODS,MF-MOVIES\" \"npm:install:host\" \"npm:install:mf-users\" \"npm:install:mf-products\" \"npm:install:mf-movies\"",
+    "install:host": "npm --prefix Client-Host-Angular install",
+    "install:mf-users": "npm --prefix Microfrontend-Users-Angular install",
+    "install:mf-products": "npm --prefix Microfrontend-Products-Angular install",
+    "install:mf-movies": "npm --prefix Microfrontend-Movies-Angular install",
+    "start": "concurrently --kill-others --names \"MF-USERS,MF-PRODS,MF-MOVIES,HOST\" \"npm:start:mf-users\" \"npm:start:mf-products\" \"npm:start:mf-movies\" \"npm:start:host\"",
+    "start:host": "npm --prefix Client-Host-Angular run start",
+    "start:mf-users": "npm --prefix Microfrontend-Users-Angular run start",
+    "start:mf-products": "npm --prefix Microfrontend-Products-Angular run start",
+    "start:mf-movies": "npm --prefix Microfrontend-Movies-Angular run start",
+    "test": "concurrently --names \"HOST,MF-USERS,MF-PRODS,MF-MOVIES\" \"npm:test:host\" \"npm:test:mf-users\" \"npm:test:mf-products\" \"npm:test:mf-movies\"",
+    "test:host": "npm --prefix Client-Host-Angular run test",
+    "test:mf-users": "npm --prefix Microfrontend-Users-Angular run test",
+    "test:mf-products": "npm --prefix Microfrontend-Products-Angular run test",
+    "test:mf-movies": "npm --prefix Microfrontend-Movies-Angular run test",
+    "build": "concurrently --names \"HOST,MF-USERS,MF-PRODS,MF-MOVIES\" \"npm:build:host\" \"npm:build:mf-users\" \"npm:build:mf-products\" \"npm:build:mf-movies\"",
+    "build:host": "npm --prefix Client-Host-Angular run build",
+    "build:mf-users": "npm --prefix Microfrontend-Users-Angular run build",
+    "build:mf-products": "npm --prefix Microfrontend-Products-Angular run build",
+    "build:mf-movies": "npm --prefix Microfrontend-Movies-Angular run build"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.0"
+  }
+}

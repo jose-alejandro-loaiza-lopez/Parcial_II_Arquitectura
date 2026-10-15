@@ -1,0 +1,40 @@
+# Dependencias
+node_modules/
+
+# Compilación / Build
+dist/
+tmp/
+out-tsc/
+bazel-out/
+
+# Cobertura de pruebas
+coverage/
+.jest-cache/
+
+# Documentación generada (Compodoc)
+documentation/
+
+# Angular
+.angular/
+
+# Editores / IDE
+.vscode/*
+!.vscode/extensions.json
+!.vscode/launch.json
+!.vscode/tasks.json
+.idea/
+*.swp
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+*.log
+
+# Sistema operativo
+.DS_Store
+Thumbs.db
+
+# Entorno
+.env
+.env.local
