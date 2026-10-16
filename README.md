@@ -1,16 +1,15 @@
-# 🧪 Parcial II — Punto 1: Microfrontends (Angular + Module Federation)
+# 🧪 Parcial II — Microfrontends + Microservicios (Clean Architecture)
 
-Implementación del **Punto 1** del Parcial II: una arquitectura de **microfrontends**
-construida con **Angular 20** y **Module Federation**, compuesta por un **host** y
-**tres microfrontends independientes** integrados mediante *remote entries*.
+Implementación del **Parcial II** de Arquitectura de Software:
 
-Cada microfrontend aplica los principios de **Clean Architecture** (Arquitectura Limpia),
-separando sus responsabilidades por capas y exponiendo **tres casos de uso** para un total
-de **nueve casos de uso** en el frontend. La comunicación con el microservicio asignado se
-realiza a través de **repositorios** (patrón Repository) que actúan como *API Gateway*.
+- **Punto 1:** arquitectura de **microfrontends** con **Angular 20** y **Module Federation**
+  (un host + tres microfrontends independientes).
+- **Punto 2:** tres **microservicios** independientes (**Node.js** y **Spring Boot**)
+  aplicando **Clean Architecture** y documentados con **Swagger**.
 
-> Punto 2 (microservicios) es desarrollado por otro integrante del grupo. Este repositorio
-> solo contiene el **Punto 1 (microfrontends)**.
+Cada microfrontend consume su microservicio asignado mediante un **repositorio HTTP**
+(patrón Repository) que actúa como *API Gateway*, y cada componente (frontend y backend)
+se organiza por capas siguiendo los principios de **Arquitectura Limpia**.
 
 ---
 
@@ -28,13 +27,12 @@ realiza a través de **repositorios** (patrón Repository) que actúan como *API
       │ MF Usuarios    │ │ MF Productos   │ │ MF Películas    │
       │   (:4201)      │ │   (:4202)      │ │   (:4203)       │
       └─────────┬──────┘ └──────┬─────────┘ └─────────┬───────┘
-                │               │                     │
-        Repository (API Gateway / Local faker)
-                │               │                     │
+                │ HTTP          │ HTTP                │ HTTP
       ┌─────────▼──────┐ ┌──────▼─────────┐ ┌─────────▼───────┐
       │ MS Usuarios    │ │ MS Productos   │ │ MS Películas    │
-      │   (:3001)      │ │   (:3002)      │ │   (:3003)       │
-      │   (Punto 2)    │ │   (Punto 2)    │ │   (Punto 2)     │
+      │   NodeJS       │ │  Spring Boot   │ │   NodeJS        │
+      │   (:3001)      │ │    (:3002)     │ │   (:3003)       │
+      │ /api/docs      │ │ swagger-ui     │ │ /api/docs       │
       └────────────────┘ └────────────────┘ └─────────────────┘
 ```
 
@@ -42,12 +40,24 @@ realiza a través de **repositorios** (patrón Repository) que actúan como *API
 
 ## 📦 Proyectos del monorepo
 
+### Frontend (Punto 1)
+
 | Proyecto | Tipo | Puerto | RemoteEntry | Microservicio que consume |
 |---|---|---|---|---|
 | `Client-Host-Angular` | Host | `4200` | — | — (carga los 3 remotos) |
 | `Microfrontend-Users-Angular` | Microfrontend | `4201` | `http://localhost:4201/remoteEntry.js` | MS Usuarios — `http://localhost:3001` |
 | `Microfrontend-Products-Angular` | Microfrontend | `4202` | `http://localhost:4202/remoteEntry.js` | MS Productos — `http://localhost:3002` |
 | `Microfrontend-Movies-Angular` | Microfrontend | `4203` | `http://localhost:4203/remoteEntry.js` | MS Películas — `http://localhost:3003` |
+
+### Backend (Punto 2)
+
+| Proyecto | Tecnología | Puerto | Swagger | Microfrontend que lo consume |
+|---|---|---|---|---|
+| `Microservice-Users-NodeJS` | Node.js + Express + TypeScript | `3001` | `http://localhost:3001/api/docs` | `Microfrontend-Users-Angular` |
+| `Microservice-Products-SpringBoot` | Java 25 + Spring Boot 4 + Gradle | `3002` | `http://localhost:3002/api/swagger-ui/index.html` | `Microfrontend-Products-Angular` |
+| `Microservice-Movies-NodeJS` | Node.js + Express + TypeScript | `3003` | `http://localhost:3003/api/docs` | `Microfrontend-Movies-Angular` |
+
+> ✅ Se cumple el requisito de **al menos un microservicio en Node.js y otro en Spring Boot**.
 
 ### Rutas del host
 
@@ -60,7 +70,7 @@ realiza a través de **repositorios** (patrón Repository) que actúan como *API
 
 ---
 
-## 🧱 Clean Architecture en cada microfrontend
+## 🧱 Clean Architecture
 
 Cada microfrontend replica la misma organización por capas:
 
@@ -75,7 +85,7 @@ src/app/
 │   └── infrastructure/               ← Capa de Infraestructura
 │       ├── repositories/
 │       │   ├── local-implementation/ Implementación Local (faker)
-│       │   └── node-implementation/  Implementación Node (HTTP al microservicio)
+│       │   └── node-implementation/  Implementación HTTP al microservicio
 │       └── services/                 DataService (HttpClient)
 ├── presentation/                     ← Capa de Presentación
 │   ├── pages/                        Página contenedora (consume los casos de uso)
@@ -87,34 +97,49 @@ src/app/
 **Flujo de dependencias:** `Presentation → Application (use cases) → Domain (repository)`
 `← Infrastructure` implementa el contrato de dominio y se inyecta mediante DI.
 
+Los microservicios backend replican las mismas capas:
+
+```
+src/
+├── domain/                           ← Entidades, errores y contratos (sin dependencias de framework)
+│   ├── models|entity/                User / Product / Movie
+│   └── repositories/                 Contrato abstracto del repositorio
+├── application/                      ← Capa de Aplicación
+│   └── usecases/                     3 casos de uso por microservicio (9 en total)
+├── infrastructure/                   ← Frameworks & Drivers
+│   ├── datasources/                  Generación de datos (faker / JavaFaker)
+│   ├── repositories/                 Implementación del contrato
+│   └── web|controller/               Servidor HTTP, rutas y controladores
+├── config|dependency-injection/      Composition Root (inyección de dependencias)
+└── app.ts|Application.java           Punto de entrada
+```
+
+**Flujo de dependencias:** `Route → Controller → UseCase → Repository (contrato)`
+`← RepositoryImpl → Datasource`. Las dependencias apuntan siempre hacia el dominio.
+
 ---
 
-## 🎯 Casos de uso (9 en total)
+## 🎯 Casos de uso
 
-### Microfrontend de Usuarios
-| # | Caso de uso | Descripción | Endpoint (impl. Node) |
-|---|---|---|---|
-| 1 | `GetAllUsersUseCase` | Listar todos los usuarios | `GET /api/users/{count}` |
-| 2 | `GetUserByIdUseCase` | Buscar un usuario por id | `GET /api/users/id/{id}` |
-| 3 | `GetUsersByEngineeringUseCase` | Filtrar por ingeniería | `GET /api/users/engineering/{engineering}` |
+### Frontend (9)
 
-### Microfrontend de Productos
-| # | Caso de uso | Descripción | Endpoint (impl. Node) |
-|---|---|---|---|
-| 4 | `GetAllProductsUseCase` | Listar todos los productos | `GET /api/products/{count}` |
-| 5 | `GetProductByIdUseCase` | Buscar un producto por id | `GET /api/products/id/{id}` |
-| 6 | `GetProductsByCategoryUseCase` | Filtrar por categoría | `GET /api/products/category/{category}` |
+| Microfrontend | Casos de uso | Endpoint consumido del microservicio |
+|---|---|---|
+| Usuarios | `GetAllUsersUseCase`, `GetUserByIdUseCase`, `GetUsersByEngineeringUseCase` | `GET /api/users/{count}`, `GET /api/users/id/{id}`, `GET /api/users/engineering/{engineering}` |
+| Productos | `GetAllProductsUseCase`, `GetProductByIdUseCase`, `GetProductsByCategoryUseCase` | `GET /api/products/{count}`, `GET /api/products/id/{id}`, `GET /api/products/category/{category}` |
+| Películas | `GetAllMoviesUseCase`, `GetMovieByIdUseCase`, `GetMoviesByGenreUseCase` | `GET /api/movies/{count}`, `GET /api/movies/id/{id}`, `GET /api/movies/genre/{genre}` |
 
-### Microfrontend de Películas
-| # | Caso de uso | Descripción | Endpoint (impl. Node) |
-|---|---|---|---|
-| 7 | `GetAllMoviesUseCase` | Listar todas las películas | `GET /api/movies/{count}` |
-| 8 | `GetMovieByIdUseCase` | Buscar una película por id | `GET /api/movies/id/{id}` |
-| 9 | `GetMoviesByGenreUseCase` | Filtrar por género | `GET /api/movies/genre/{genre}` |
+### Backend (9)
+
+| Microservicio | Casos de uso | Endpoints |
+|---|---|---|
+| `Microservice-Users-NodeJS` | `GetAllUsersUseCase`, `GetUserByIdUseCase`, `GetUsersByEngineeringUseCase` | `GET /api/users/{countUsers}` · `GET /api/users/id/{id}` · `GET /api/users/engineering/{engineering}` |
+| `Microservice-Products-SpringBoot` | `GetAllProductsUseCase`, `GetProductByIdUseCase`, `GetProductsByCategoryUseCase` | `GET /api/products/{countProducts}` · `GET /api/products/id/{id}` · `GET /api/products/category/{category}` |
+| `Microservice-Movies-NodeJS` | `GetAllMoviesUseCase`, `GetMovieByIdUseCase`, `GetMoviesByGenreUseCase` | `GET /api/movies/{countMovies}` · `GET /api/movies/id/{id}` · `GET /api/movies/genre/{genre}` |
 
 ### Modelos de dominio
 
-| Microfrontend | Modelo | Atributos |
+| Módulo | Modelo | Atributos |
 |---|---|---|
 | Usuarios | `User` | `id`, `name`, `lastName`, `age`, `email`, `engineering` |
 | Productos | `Product` | `id`, `name`, `category`, `price` |
@@ -127,23 +152,19 @@ Tipos de filtrado:
 
 ---
 
-## 🔀 Repositorios: Local (faker) vs. Node (microservicio)
+## 🔀 Repositorios del microfrontend: Microservicio (HTTP) vs. Local (faker)
 
 Cada microfrontend define un contrato abstracto de repositorio en la capa de dominio
 (`UserRepository`, `ProductRepository`, `MovieRepository`) con dos implementaciones:
 
-- **`*LocalRepositoryImpl`** → genera datos simulados con **`@faker-js/faker`** (no hace
-  peticiones HTTP). **Activada por defecto**, para poder ejecutar y probar los
-  microfrontends sin necesidad de que los microservicios (Punto 2) estén levantados.
 - **`*NodeRepositoryImpl`** → consume el microservicio real mediante `DataService`
-  (`HttpClient`) usando `environment.baseUrl`. **Comentada por defecto**.
+  (`HttpClient`) usando `environment.baseUrl`. **Activada por defecto**, de modo que las
+  solicitudes de red quedan visibles en la pestaña *Network* del navegador.
+- **`*LocalRepositoryImpl`** → genera datos simulados con **`@faker-js/faker`** (no hace
+  peticiones HTTP). Permite ejecutar los microfrontends sin levantar los microservicios.
 
 El proveedor se registra a **nivel de componente** en la página contenedora
-(`*.page.ts`), de modo que la inyección de dependencias funciona tanto en modo
-*standalone* como cuando el host carga el remoto por Module Federation.
-
-Para alternar entre Local y Node, edita los `providers` de la página
-(`src/app/presentation/pages/*/*.page.ts`):
+(`*.page.ts`). Para alternar entre Microservicio y Local, edita los `providers`:
 
 ```ts
 providers: [
@@ -151,17 +172,16 @@ providers: [
   GetUserByIdUseCase,
   GetUsersByEngineeringUseCase,
 
-  // Implementación LOCAL (datos simulados con faker)
-  { provide: UserRepository, useClass: UserLocalRepositoryImpl },
+  // Implementación MICROSERVICIO (por defecto)
+  { provide: UserRepository, useClass: UserNodeRepositoryImpl },
 
-  // Implementación NODE (consume Microservice-Users-NodeJS en :3001)
-  // { provide: UserRepository, useClass: UserNodeRepositoryImpl },
+  // Implementación LOCAL (datos simulados con faker, sin microservicio)
+  // { provide: UserRepository, useClass: UserLocalRepositoryImpl },
 ],
 ```
 
-> Al activar la implementación Node, recuerda que el host ya provee
-> `provideHttpClient()`, por lo que las peticiones HTTP funcionan dentro de la
-> aplicación federada. Los microservicios son responsabilidad del Punto 2.
+> **Importante:** con la implementación de microservicio activa, los microfrontends
+> requieren que el microservicio correspondiente esté en ejecución (ver ejecución).
 
 ---
 
@@ -169,6 +189,8 @@ providers: [
 
 - [Node.js](https://nodejs.org/) (v24 recomendado) y **npm**
 - **Angular CLI** (`npm i -g @angular/cli`) — verifica con `ng version`
+- **JDK 25** (solo para el microservicio de productos en Spring Boot; incluye wrapper de
+  Gradle, no requiere instalar Gradle)
 - **Git** y **Visual Studio Code** (opcional)
 
 ---
@@ -184,64 +206,62 @@ npm install
 ```
 
 Esto instala `concurrently` en la raíz y, mediante el script `postinstall`, instala
-automáticamente las dependencias de **los cuatro proyectos** (`Client-Host-Angular` y los
-tres microfrontends) en paralelo.
+automáticamente las dependencias de **los seis proyectos npm** (`Client-Host-Angular`,
+los tres microfrontends y los dos microservicios NodeJS) en paralelo.
 
 ### Opción 2 — Proyecto por proyecto
 
 ```bash
-# Host
 cd Client-Host-Angular && npm i && cd ..
-
-# Microfrontends
 cd Microfrontend-Users-Angular && npm i && cd ..
 cd Microfrontend-Products-Angular && npm i && cd ..
 cd Microfrontend-Movies-Angular && npm i && cd ..
+cd Microservice-Users-NodeJS && npm i && cd ..
+cd Microservice-Movies-NodeJS && npm i && cd ..
+# El microservicio de Spring Boot resuelve dependencias con Gradle al ejecutarse
 ```
 
 ---
 
 ## ▶️ Ejecución
 
-Se debe levantar **primero los microfrontends** (remotos) y **después el host**, ya que el
-host consume sus `remoteEntry.js`.
-
-### Opción 1 — Desde la raíz del monorepo (recomendado)
+### Opción 1 — Todo el sistema (recomendado)
 
 ```bash
-# En la raíz de Parcial II (después de npm install)
+# En la raíz (después de npm install)
+npm run start:all
+```
+
+Levanta al mismo tiempo los **tres microservicios** (`3001`, `3002`, `3003`), los **tres
+microfrontends** (`4201`, `4202`, `4203`) y el **host** (`4200`). El host **espera a que
+los tres remotos estén disponibles** antes de arrancar y, al terminar de compilar, **abre
+automáticamente el navegador en http://localhost:4200**.
+
+### Opción 2 — Microservicios y frontend por separado
+
+```bash
+# Terminal 1 — Backend (los 3 microservicios a la vez)
+npm run start:services
+
+# Terminal 2 — Frontend (los 3 microfrontends + host)
 npm start
 ```
 
-Levanta al mismo tiempo los tres microfrontends (`4201`, `4202`, `4203`) y el host
-(`4200`) usando `concurrently`. El host **espera a que los tres remotos estén disponibles**
-(sus `remoteEntry.js`) antes de arrancar y, al terminar de compilar, **abre automáticamente
-el navegador en http://localhost:4200**.
+### Opción 3 — Cada proyecto por separado
 
-Otros scripts de la raíz:
+En **7 terminales** distintas:
 
 ```bash
-npm test            # pruebas unitarias de los cuatro proyectos
-npm run build       # build de producción de los cuatro proyectos
-npm run compodoc    # genera la documentación de los cuatro proyectos y la abre
-```
+# Backend
+cd Microservice-Users-NodeJS && npm start            # http://localhost:3001
+cd Microservice-Products-SpringBoot && gradlew.bat bootRun   # http://localhost:3002
+cd Microservice-Movies-NodeJS && npm start           # http://localhost:3003
 
-### Opción 2 — Cada proyecto por separado
-
-En **4 terminales** distintas:
-
-```bash
-# Terminal 1 — Microfrontend Usuarios
-cd Microfrontend-Users-Angular && npm start        # http://localhost:4201
-
-# Terminal 2 — Microfrontend Productos
-cd Microfrontend-Products-Angular && npm start     # http://localhost:4202
-
-# Terminal 3 — Microfrontend Películas
-cd Microfrontend-Movies-Angular && npm start       # http://localhost:4203
-
-# Terminal 4 — Host
-cd Client-Host-Angular && npm start                # http://localhost:4200
+# Frontend
+cd Microfrontend-Users-Angular && npm start          # http://localhost:4201
+cd Microfrontend-Products-Angular && npm start       # http://localhost:4202
+cd Microfrontend-Movies-Angular && npm start         # http://localhost:4203
+cd Client-Host-Angular && npm start                  # http://localhost:4200
 ```
 
 Luego abre: **http://localhost:4200**
@@ -254,35 +274,32 @@ Luego abre: **http://localhost:4200**
 | MF Usuarios | `http://localhost:4201/remoteEntry.js` | Devuelve el `remoteEntry.js` |
 | MF Productos | `http://localhost:4202/remoteEntry.js` | Devuelve el `remoteEntry.js` |
 | MF Películas | `http://localhost:4203/remoteEntry.js` | Devuelve el `remoteEntry.js` |
+| MS Usuarios (NodeJS) | `http://localhost:3001/api/docs` | Swagger UI |
+| MS Productos (Spring Boot) | `http://localhost:3002/api/swagger-ui/index.html` | Swagger UI |
+| MS Películas (NodeJS) | `http://localhost:3003/api/docs` | Swagger UI |
 
-> También puedes ejecutar cada microfrontend de forma independiente en
-> `http://localhost:420X` para ver su página directamente.
+> Para verificar la integración, abre las **DevTools del navegador (F12) → Network** y
+> navega entre las rutas: verás las peticiones `GET http://localhost:300X/api/...` que
+> cada microfrontend realiza a su microservicio.
 
 ---
 
-## 🧪 Pruebas unitarias y cobertura
+## 🧪 Pruebas
 
-Cada proyecto usa **Jest** (`jest-preset-angular`) con cobertura habilitada y supera el
-**90%** exigido (los microfrontends alcanzan **100%**).
+### Microfrontends (Jest)
+
+Cada proyecto Angular usa **Jest** (`jest-preset-angular`) con cobertura habilitada y
+supera el **90%** exigido (los microfrontends alcanzan **100%**).
 
 ```bash
-# Desde la raíz del monorepo: ejecuta las pruebas de los cuatro proyectos
+# Desde la raíz: ejecuta las pruebas de los cuatro proyectos Angular
 npm test
 
-# Por proyecto
-cd Microfrontend-Users-Angular && npm test
-
-# Ejecutar con reporte de cobertura (por proyecto)
+# Reporte con cobertura de un microfrontend
 cd Microfrontend-Users-Angular && npm run test:coverage
-
-# Modo watch (por proyecto)
-cd Microfrontend-Users-Angular && npm run test:watch
 ```
 
-> `npm test` en la raíz ejecuta los proyectos **uno tras otro (no en paralelo)** para evitar
-> que los cuatro procesos de Jest agoten la memoria. Resultado esperado: **137 pruebas**
-> (5 del host + 44 × 3 microfrontends), todas en verde.
-
+Resultado esperado: **137 pruebas** (5 del host + 44 × 3 microfrontends), todas en verde.
 El reporte HTML queda en `coverage/` dentro de cada proyecto.
 
 | Proyecto | Pruebas | Cobertura |
@@ -293,43 +310,74 @@ El reporte HTML queda en `coverage/` dentro de cada proyecto.
 | `Microfrontend-Movies-Angular` | 44 | 100% |
 | **Total** | **137** | **100%** |
 
+### Microservicios (Node test runner + JUnit)
+
+```bash
+# Los 3 microservicios a la vez
+npm run test:services
+
+# O por separado
+cd Microservice-Users-NodeJS && npm test    # node:test + tsx
+cd Microservice-Movies-NodeJS && npm test   # node:test + tsx
+cd Microservice-Products-SpringBoot && gradlew.bat test   # JUnit
+```
+
+Las pruebas backend cubren las capas de casos de uso (validaciones incluidas),
+datasource, repositorio y controlador.
+
+### Todo junto
+
+```bash
+npm run test:all    # pruebas de Angular + microservicios
+```
+
 ---
 
 ## 🏗️ Build de producción
 
 ```bash
-# Desde la raíz del monorepo: compila los cuatro proyectos
+# Frontend (4 proyectos Angular)
 npm run build
 
-# O por proyecto
+# Backend (2 Node + 1 Spring Boot)
+npm run build:services
+
+# Por proyecto
 cd Client-Host-Angular && npm run build
-cd Microfrontend-Users-Angular && npm run build
-cd Microfrontend-Products-Angular && npm run build
-cd Microfrontend-Movies-Angular && npm run build
+cd Microservice-Users-NodeJS && npm run build
+cd Microservice-Movies-NodeJS && npm run build
+cd Microservice-Products-SpringBoot && gradlew.bat build
 ```
 
-Los artefactos se generan en `dist/<NombreDelProyecto>`. El host resuelve los remotos por
-URL absoluta (`http://localhost:420X/remoteEntry.js`), por lo que en producción basta con
-servir cada `dist/` y ajustar dichas URLs en `Client-Host-Angular/src/app/app.routes.ts`.
+Los artefactos se generan en `dist/<NombreDelProyecto>` (Angular y Node) y en
+`build/libs/` (Spring Boot). El host resuelve los remotos por URL absoluta
+(`http://localhost:420X/remoteEntry.js`), por lo que en producción basta con servir cada
+`dist/` y ajustar dichas URLs en `Client-Host-Angular/src/app/app.routes.ts`.
 
 ---
 
-## 📚 Documentación (Compodoc)
+## 📚 Documentación
 
-Cada proyecto incluye JSDoc por capas y puede generar documentación con Compodoc. Al
-terminar, **el comando abre automáticamente el `documentation/index.html` generado** en el
-navegador.
+### Documentación técnica por proyecto
 
-Desde la raíz del monorepo (genera y abre la de los cuatro proyectos):
+Cada microfrontend y cada microservicio incluye su propio `README.md` con la descripción
+de la arquitectura por capas, sus casos de uso, endpoints y comandos de ejecución.
+
+### Swagger (microservicios)
+
+| Microservicio | Swagger UI | OpenAPI JSON |
+|---|---|---|
+| MS Usuarios (NodeJS) | `http://localhost:3001/api/docs` | — |
+| MS Productos (Spring Boot) | `http://localhost:3002/api/swagger-ui/index.html` | `http://localhost:3002/api/v3/api-docs` |
+| MS Películas (NodeJS) | `http://localhost:3003/api/docs` | — |
+
+### Compodoc (microfrontends)
+
+Cada proyecto Angular incluye JSDoc por capas y puede generar documentación con Compodoc.
+Al terminar, **el comando abre automáticamente el `documentation/index.html` generado**:
 
 ```bash
 npm run compodoc
-```
-
-O por proyecto:
-
-```bash
-cd Microfrontend-Users-Angular && npm run compodoc
 ```
 
 El resultado queda en `documentation/index.html` dentro de cada proyecto. Si prefieres
@@ -343,12 +391,22 @@ npx compodoc -p tsconfig.doc.json -s -o
 
 ## 🛠️ Tecnologías
 
+**Frontend**
+
 - **Angular 20.3.14** (standalone components, signals-ready)
 - **Module Federation** — `@angular-architects/module-federation` + `ngx-build-plus`
 - **Jest 30** + `jest-preset-angular 15` (cobertura con `collectCoverage`)
 - **Bootstrap 5.3.8** y **`@brejcha13320/design-system-bootstrap`** (navbar, badges, iconos)
 - **`@faker-js/faker`** para la implementación Local de los repositorios
 - **Compodoc** para la documentación
+
+**Backend**
+
+- **Node.js + Express 5 + TypeScript** (microservicios de usuarios y películas)
+- **Swagger** — `swagger-jsdoc` + `swagger-ui-express`
+- **`@faker-js/faker`** para los datasources simulados
+- **Java 25 + Spring Boot 4.0.1 + Gradle** (microservicio de productos)
+- **springdoc-openapi** para Swagger y **JavaFaker** para el datasource simulado
 
 ---
 
