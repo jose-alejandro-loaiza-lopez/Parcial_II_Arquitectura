@@ -38,3 +38,5 @@ Thumbs.db
 # Entorno
 .env
 .env.local
+# Los microservicios versionan su .env (solo puerto y ruta pública)
+!Microservice-*/.env
