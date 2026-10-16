@@ -23,11 +23,15 @@ Es el backend asignado al **Microfrontend de Usuarios** (`http://localhost:4201`
 
 | # | Caso de uso | Endpoint | Descripción |
 |---|---|---|---|
-| 1 | `GetAllUsersUseCase` | `GET /api/users/{countUsers}` | Lista `countUsers` usuarios (1–100) |
+| 1 | `GetAllUsersUseCase` | `GET /api/users/{countUsers}` | Lista hasta `countUsers` usuarios del conjunto de datos (1–100) |
 | 2 | `GetUserByIdUseCase` | `GET /api/users/id/{id}` | Retorna el usuario con el id solicitado |
-| 3 | `GetUsersByEngineeringUseCase` | `GET /api/users/engineering/{engineering}` | Lista usuarios de la ingeniería (5) |
+| 3 | `GetUsersByEngineeringUseCase` | `GET /api/users/engineering/{engineering}` | Lista los usuarios de la ingeniería (4) |
 
 Ingenierías válidas: `Sistemas`, `Electronica`, `Biomedica`, `Industrial`, `Ambiental`.
+
+Los datos provienen de un conjunto fijo de **20 usuarios semilla** (4 por ingeniería), por lo
+que las consultas son deterministas: listar dos veces retorna lo mismo, y los filtrados son
+subconjuntos del listado completo. Un id inexistente responde `404` con `{ "error": "..." }`.
 
 Parámetros inválidos responden `400` con `{ "error": "..." }`.
 
@@ -46,7 +50,7 @@ src/
 ├── application/                     ← Reglas de negocio
 │   └── usecases/                    3 casos de uso
 ├── infrastructure/                  ← Frameworks & Drivers
-│   ├── datasources/                 Generación de datos con faker
+│   ├── datasources/                 Datos semilla en memoria (deterministas)
 │   ├── repositories/                UserRepositoryImpl
 │   └── web/                         Servidor Express, rutas, controlador, Swagger
 ├── dependency-injection/            Composition Root (Container)
@@ -90,8 +94,8 @@ npm test        # Pruebas unitarias (node:test + tsx)
 npm test
 ```
 
-Cubren las cuatro capas: casos de uso (validaciones incluidas), datasource (faker),
-repositorio (delegación) y controlador (códigos HTTP y manejo de errores).
+Cubren las cuatro capas: casos de uso (validaciones incluidas), datasource (consistencia de
+los datos semilla), repositorio (delegación) y controlador (códigos HTTP y manejo de errores).
 
 ---
 
@@ -110,9 +114,9 @@ Respuesta típica:
   {
     "id": 1,
     "name": "Carlos",
-    "lastName": "Ramirez",
+    "lastName": "Ramírez",
     "age": 22,
-    "email": "carlos.ramirez@example.com",
+    "email": "carlos.ramirez@uceva.edu.co",
     "engineering": "Sistemas"
   }
 ]
