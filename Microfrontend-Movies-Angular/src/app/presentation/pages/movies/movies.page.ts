@@ -82,7 +82,7 @@ export class MoviesPage implements OnInit {
   /** Caso de uso 1: listar todas las películas. */
   loadAll(): void {
     this.state = 'loading';
-    this.getAllMovies.execute(10).subscribe({
+    this.getAllMovies.execute(100).subscribe({
       next: (movies) => {
         this.movies = movies;
         this.state = 'success';

@@ -85,7 +85,7 @@ export class UsersPage implements OnInit {
   /** Caso de uso 1: listar todos los usuarios. */
   loadAll(): void {
     this.state = 'loading';
-    this.getAllUsers.execute(10).subscribe({
+    this.getAllUsers.execute(100).subscribe({
       next: (users) => {
         this.users = users;
         this.state = 'success';

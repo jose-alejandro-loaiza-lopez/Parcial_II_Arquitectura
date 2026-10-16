@@ -47,7 +47,7 @@ describe('MoviesPage (Microfrontend Películas)', () => {
 
   it('debe listar las películas al inicializar (getAll)', () => {
     fixture.detectChanges();
-    expect(GetAllMoviesUseCaseMock.execute).toHaveBeenCalledWith(10);
+    expect(GetAllMoviesUseCaseMock.execute).toHaveBeenCalledWith(100);
     expect(component.movies).toEqual(MOVIES_MOCK);
     expect(component.state).toBe('success');
   });

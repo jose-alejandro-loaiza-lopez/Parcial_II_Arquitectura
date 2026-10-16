@@ -47,7 +47,7 @@ describe('UsersPage (Microfrontend Usuarios)', () => {
 
   it('debe listar los usuarios al inicializar (getAll)', () => {
     fixture.detectChanges();
-    expect(GetAllUsersUseCaseMock.execute).toHaveBeenCalledWith(10);
+    expect(GetAllUsersUseCaseMock.execute).toHaveBeenCalledWith(100);
     expect(component.users).toEqual(USERS_MOCK);
     expect(component.state).toBe('success');
   });

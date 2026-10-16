@@ -84,7 +84,7 @@ export class ProductsPage implements OnInit {
   /** Caso de uso 1: listar todos los productos. */
   loadAll(): void {
     this.state = 'loading';
-    this.getAllProducts.execute(10).subscribe({
+    this.getAllProducts.execute(100).subscribe({
       next: (products) => {
         this.products = products;
         this.state = 'success';

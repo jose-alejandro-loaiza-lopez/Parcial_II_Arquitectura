@@ -47,7 +47,7 @@ describe('ProductsPage (Microfrontend Productos)', () => {
 
   it('debe listar los productos al inicializar (getAll)', () => {
     fixture.detectChanges();
-    expect(GetAllProductsUseCaseMock.execute).toHaveBeenCalledWith(10);
+    expect(GetAllProductsUseCaseMock.execute).toHaveBeenCalledWith(100);
     expect(component.products).toEqual(PRODUCTS_MOCK);
     expect(component.state).toBe('success');
   });
