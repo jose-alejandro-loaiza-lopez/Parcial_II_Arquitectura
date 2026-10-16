@@ -23,11 +23,15 @@ Es el backend asignado al **Microfrontend de Películas** (`http://localhost:420
 
 | # | Caso de uso | Endpoint | Descripción |
 |---|---|---|---|
-| 1 | `GetAllMoviesUseCase` | `GET /api/movies/{countMovies}` | Lista `countMovies` películas (1–100) |
+| 1 | `GetAllMoviesUseCase` | `GET /api/movies/{countMovies}` | Lista hasta `countMovies` películas del conjunto de datos (1–100) |
 | 2 | `GetMovieByIdUseCase` | `GET /api/movies/id/{id}` | Retorna la película con el id solicitado |
-| 3 | `GetMoviesByGenreUseCase` | `GET /api/movies/genre/{genre}` | Lista películas del género (5) |
+| 3 | `GetMoviesByGenreUseCase` | `GET /api/movies/genre/{genre}` | Lista las películas del género (3) |
 
 Géneros válidos: `Accion`, `Comedia`, `Drama`, `Terror`, `Ciencia Ficcion`.
+
+Los datos provienen de un conjunto fijo de **15 películas semilla** (3 por género), por lo
+que las consultas son deterministas: listar dos veces retorna lo mismo, y los filtrados son
+subconjuntos del listado completo. Un id inexistente responde `404` con `{ "error": "..." }`.
 
 Parámetros inválidos responden `400` con `{ "error": "..." }`.
 
@@ -46,7 +50,7 @@ src/
 ├── application/                     ← Reglas de negocio
 │   └── usecases/                    3 casos de uso
 ├── infrastructure/                  ← Frameworks & Drivers
-│   ├── datasources/                 Generación de datos con faker
+│   ├── datasources/                 Datos semilla en memoria (deterministas)
 │   ├── repositories/                MovieRepositoryImpl
 │   └── web/                         Servidor Express, rutas, controlador, Swagger
 ├── dependency-injection/            Composition Root (Container)
@@ -90,8 +94,8 @@ npm test        # Pruebas unitarias (node:test + tsx)
 npm test
 ```
 
-Cubren las cuatro capas: casos de uso (validaciones incluidas), datasource (faker),
-repositorio (delegación) y controlador (códigos HTTP y manejo de errores).
+Cubren las cuatro capas: casos de uso (validaciones incluidas), datasource (consistencia de
+los datos semilla), repositorio (delegación) y controlador (códigos HTTP y manejo de errores).
 
 ---
 
@@ -109,10 +113,10 @@ Respuesta típica:
 [
   {
     "id": 1,
-    "title": "quos dolorum nam",
-    "genre": "Drama",
-    "releaseYear": 1994,
-    "rating": 8.6
+    "title": "Invasión Final",
+    "genre": "Accion",
+    "releaseYear": 2015,
+    "rating": 7.8
   }
 ]
 ```
