@@ -27,11 +27,15 @@ Es el backend asignado al **Microfrontend de Productos** (`http://localhost:4202
 
 | # | Caso de uso | Endpoint | Descripción |
 |---|---|---|---|
-| 1 | `GetAllProductsUseCase` | `GET /api/products/{countProducts}` | Lista `countProducts` productos (1–100) |
+| 1 | `GetAllProductsUseCase` | `GET /api/products/{countProducts}` | Lista hasta `countProducts` productos del conjunto de datos (1–100) |
 | 2 | `GetProductByIdUseCase` | `GET /api/products/id/{id}` | Retorna el producto con el id solicitado |
-| 3 | `GetProductsByCategoryUseCase` | `GET /api/products/category/{category}` | Lista productos de la categoría (5) |
+| 3 | `GetProductsByCategoryUseCase` | `GET /api/products/category/{category}` | Lista los productos de la categoría (4) |
 
 Categorías válidas: `Lacteos`, `Carnes`, `Frutas`, `Verduras`.
+
+Los datos provienen de un conjunto fijo de **16 productos semilla** (4 por categoría), por lo
+que las consultas son deterministas: listar dos veces retorna lo mismo, y los filtrados son
+subconjuntos del listado completo. Un id inexistente responde `404` con `{ "error": "..." }`.
 
 Parámetros inválidos responden `400` con `{ "error": "..." }` gracias al
 `GlobalExceptionHandler`.
@@ -50,7 +54,7 @@ src/main/java/uceva/products/
 ├── application/                     ← Reglas de negocio
 │   └── usecase/                     3 casos de uso
 ├── infrastructure/                  ← Frameworks & Drivers
-│   ├── datasource/                  Generación de datos con JavaFaker
+│   ├── datasource/                  Datos semilla en memoria (deterministas)
 │   ├── repository/                  ProductRepositoryImpl
 │   └── controller/                  ProductController + GlobalExceptionHandler
 ├── config/                          Composition Root (AppConfig), CORS y OpenAPI
@@ -102,7 +106,7 @@ Respuesta típica:
 [
   {
     "id": 1,
-    "name": "Leche entera",
+    "name": "Leche entera 1L",
     "category": "Lacteos",
     "price": 4500.0
   }

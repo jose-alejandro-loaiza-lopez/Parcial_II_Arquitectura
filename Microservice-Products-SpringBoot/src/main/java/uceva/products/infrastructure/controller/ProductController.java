@@ -35,21 +35,22 @@ public class ProductController {
 
     @Operation(
             summary = "Obtener listado de productos",
-            description = "Retorna una lista de productos generados dinámicamente según la cantidad solicitada (1 a 100).")
-    @ApiResponse(responseCode = "200", description = "Lista de productos generados")
+            description = "Retorna hasta los primeros `countProducts` productos del conjunto de datos (1 a 100).")
+    @ApiResponse(responseCode = "200", description = "Lista de productos del conjunto de datos")
     @ApiResponse(responseCode = "400", description = "Parámetro inválido")
     @GetMapping("/{countProducts}")
     public List<Product> getAll(
-            @Parameter(description = "Cantidad de productos a generar", example = "10")
+            @Parameter(description = "Cantidad de productos a listar (1 a 100)", example = "100")
             @PathVariable int countProducts) {
         return getAllProductsUseCase.execute(countProducts);
     }
 
     @Operation(
             summary = "Obtener un producto por id",
-            description = "Retorna un producto generado dinámicamente con el identificador solicitado.")
+            description = "Retorna el producto del conjunto de datos con el identificador solicitado.")
     @ApiResponse(responseCode = "200", description = "Producto encontrado")
     @ApiResponse(responseCode = "400", description = "Parámetro inválido")
+    @ApiResponse(responseCode = "404", description = "Producto no encontrado")
     @GetMapping("/id/{id}")
     public Product getById(
             @Parameter(description = "Identificador único del producto", example = "1")
@@ -59,7 +60,7 @@ public class ProductController {
 
     @Operation(
             summary = "Obtener productos por categoría",
-            description = "Retorna una lista de productos generados dinámicamente para la categoría solicitada.")
+            description = "Retorna los productos del conjunto de datos que pertenecen a la categoría solicitada.")
     @ApiResponse(responseCode = "200", description = "Lista de productos de la categoría")
     @ApiResponse(responseCode = "400", description = "Parámetro inválido")
     @GetMapping("/category/{category}")
