@@ -70,8 +70,13 @@ export class MoviesPage implements OnInit {
     'Ciencia Ficcion',
   ];
 
+  /** Caso de uso 1: listar todas las películas del microservicio. */
   private getAllMovies = inject(GetAllMoviesUseCase);
+
+  /** Caso de uso 2: buscar una película por id en el microservicio. */
   private getMovieById = inject(GetMovieByIdUseCase);
+
+  /** Caso de uso 3: filtrar películas por género en el microservicio. */
   private getMoviesByGenre = inject(GetMoviesByGenreUseCase);
 
   /** Carga inicial: lista las películas. */

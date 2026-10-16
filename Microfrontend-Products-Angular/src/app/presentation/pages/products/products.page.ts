@@ -72,8 +72,13 @@ export class ProductsPage implements OnInit {
     'Verduras',
   ];
 
+  /** Caso de uso 1: listar todos los productos del microservicio. */
   private getAllProducts = inject(GetAllProductsUseCase);
+
+  /** Caso de uso 2: buscar un producto por id en el microservicio. */
   private getProductById = inject(GetProductByIdUseCase);
+
+  /** Caso de uso 3: filtrar productos por categoría en el microservicio. */
   private getProductsByCategory = inject(GetProductsByCategoryUseCase);
 
   /** Carga inicial: lista los productos. */

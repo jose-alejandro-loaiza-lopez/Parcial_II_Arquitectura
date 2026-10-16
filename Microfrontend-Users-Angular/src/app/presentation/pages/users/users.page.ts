@@ -73,8 +73,13 @@ export class UsersPage implements OnInit {
     'Ambiental',
   ];
 
+  /** Caso de uso 1: listar todos los usuarios del microservicio. */
   private getAllUsers = inject(GetAllUsersUseCase);
+
+  /** Caso de uso 2: buscar un usuario por id en el microservicio. */
   private getUserById = inject(GetUserByIdUseCase);
+
+  /** Caso de uso 3: filtrar usuarios por ingeniería en el microservicio. */
   private getUsersByEngineering = inject(GetUsersByEngineeringUseCase);
 
   /** Carga inicial: lista los usuarios. */
