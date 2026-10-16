@@ -36,8 +36,8 @@ src/app/
 
 ## Repositorio: Local vs. Node
 
-- `MovieLocalRepositoryImpl` — datos simulados con `@faker-js/faker` (**activo por defecto**).
-- `MovieNodeRepositoryImpl` — consume `http://localhost:3003` vía `environment.baseUrl`.
+- `MovieNodeRepositoryImpl` — consume `http://localhost:3003` vía `environment.baseUrl` (**activo por defecto**).
+- `MovieLocalRepositoryImpl` — datos simulados con `@faker-js/faker` (alternativa sin microservicio).
 
 El proveedor se define a nivel de componente en
 `src/app/presentation/pages/movies/movies.page.ts`. Comenta/descomenta el `useClass`

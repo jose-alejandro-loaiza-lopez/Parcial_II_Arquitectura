@@ -36,8 +36,8 @@ src/app/
 
 ## Repositorio: Local vs. Node
 
-- `UserLocalRepositoryImpl` — datos simulados con `@faker-js/faker` (**activo por defecto**).
-- `UserNodeRepositoryImpl` — consume `http://localhost:3001` vía `environment.baseUrl`.
+- `UserNodeRepositoryImpl` — consume `http://localhost:3001` vía `environment.baseUrl` (**activo por defecto**).
+- `UserLocalRepositoryImpl` — datos simulados con `@faker-js/faker` (alternativa sin microservicio).
 
 El proveedor se define a nivel de componente en
 `src/app/presentation/pages/users/users.page.ts`. Comenta/descomenta el `useClass`

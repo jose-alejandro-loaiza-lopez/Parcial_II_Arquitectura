@@ -107,7 +107,7 @@ src/
 ├── application/                      ← Capa de Aplicación
 │   └── usecases/                     3 casos de uso por microservicio (9 en total)
 ├── infrastructure/                   ← Frameworks & Drivers
-│   ├── datasources/                  Generación de datos (faker / JavaFaker)
+│   ├── datasources/                  Datos semilla en memoria (deterministas)
 │   ├── repositories/                 Implementación del contrato
 │   └── web|controller/               Servidor HTTP, rutas y controladores
 ├── config|dependency-injection/      Composition Root (inyección de dependencias)
@@ -149,6 +149,10 @@ Tipos de filtrado:
 `UserEngineering = 'Sistemas' | 'Electronica' | 'Biomedica' | 'Industrial' | 'Ambiental'`
 `ProductCategory = 'Lacteos' | 'Carnes' | 'Frutas' | 'Verduras'`
 `MovieGenre = 'Accion' | 'Comedia' | 'Drama' | 'Terror' | 'Ciencia Ficcion'`
+
+Los microservicios exponen un **conjunto fijo de datos semilla** (20 usuarios, 16 productos y
+15 películas): listar, buscar por id y filtrar son deterministas, los filtrados retornan
+subconjuntos del mismo listado y un id inexistente responde `404`.
 
 ---
 
@@ -404,9 +408,9 @@ npx compodoc -p tsconfig.doc.json -s -o
 
 - **Node.js + Express 5 + TypeScript** (microservicios de usuarios y películas)
 - **Swagger** — `swagger-jsdoc` + `swagger-ui-express`
-- **`@faker-js/faker`** para los datasources simulados
 - **Java 25 + Spring Boot 4.0.1 + Gradle** (microservicio de productos)
-- **springdoc-openapi** para Swagger y **JavaFaker** para el datasource simulado
+- **springdoc-openapi** para Swagger
+- Datasources en memoria con datos semilla deterministas (sin faker)
 
 ---
 
