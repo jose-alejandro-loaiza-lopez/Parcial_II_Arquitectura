@@ -13,7 +13,7 @@ import { DataService } from '../../services/data.service';
  * @remarks
  * Pertenece a la **capa de infraestructura** y actúa como *Adapter*
  * entre el dominio y el microservicio de productos
- * (Microservice-Products-NodeJS, `http://localhost:3002`). Consume los
+ * (Microservice-Products-SpringBoot, `http://localhost:3002`). Consume los
  * endpoints del microservicio a través del {@link DataService}.
  *
  * @see ProductRepository

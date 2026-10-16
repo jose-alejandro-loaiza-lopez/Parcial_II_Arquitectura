@@ -3,7 +3,7 @@
  *
  * @remarks
  * `baseUrl` apunta al microservicio asignado a este microfrontend
- * (Microservice-Products-NodeJS, puerto `3002`). Se utiliza únicamente
+ * (Microservice-Products-SpringBoot, puerto `3002`). Se utiliza únicamente
  * cuando el proveedor activo es la implementación **Node** del
  * repositorio; con la implementación **Local** (faker) no se realizan
  * peticiones HTTP.

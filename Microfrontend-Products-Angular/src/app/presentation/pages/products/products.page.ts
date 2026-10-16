@@ -44,11 +44,11 @@ import { State } from '../../interfaces/state.interface';
     GetProductByIdUseCase,
     GetProductsByCategoryUseCase,
 
-    // Implementación LOCAL (datos simulados con faker)
-    { provide: ProductRepository, useClass: ProductLocalRepositoryImpl },
+    // Implementación MICROSERVICIO (consume Microservice-Products-SpringBoot en :3002)
+    { provide: ProductRepository, useClass: ProductNodeRepositoryImpl },
 
-    // Implementación NODE (consume Microservice-Products-NodeJS en :3002)
-    // { provide: ProductRepository, useClass: ProductNodeRepositoryImpl },
+    // Implementación LOCAL (datos simulados con faker, sin microservicio)
+    // { provide: ProductRepository, useClass: ProductLocalRepositoryImpl },
   ],
 })
 export class ProductsPage implements OnInit {

@@ -41,11 +41,11 @@ import { State } from '../../interfaces/state.interface';
     GetMovieByIdUseCase,
     GetMoviesByGenreUseCase,
 
-    // Implementación LOCAL (datos simulados con faker)
-    { provide: MovieRepository, useClass: MovieLocalRepositoryImpl },
+    // Implementación MICROSERVICIO (consume Microservice-Movies-NodeJS en :3003)
+    { provide: MovieRepository, useClass: MovieNodeRepositoryImpl },
 
-    // Implementación NODE (consume Microservice-Movies-NodeJS en :3003)
-    // { provide: MovieRepository, useClass: MovieNodeRepositoryImpl },
+    // Implementación LOCAL (datos simulados con faker, sin microservicio)
+    // { provide: MovieRepository, useClass: MovieLocalRepositoryImpl },
   ],
 })
 export class MoviesPage implements OnInit {

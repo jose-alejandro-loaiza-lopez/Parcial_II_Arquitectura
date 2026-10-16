@@ -44,11 +44,11 @@ import { State } from '../../interfaces/state.interface';
     GetUserByIdUseCase,
     GetUsersByEngineeringUseCase,
 
-    // Implementación LOCAL (datos simulados con faker)
-    { provide: UserRepository, useClass: UserLocalRepositoryImpl },
+    // Implementación MICROSERVICIO (consume Microservice-Users-NodeJS en :3001)
+    { provide: UserRepository, useClass: UserNodeRepositoryImpl },
 
-    // Implementación NODE (consume Microservice-Users-NodeJS en :3001)
-    // { provide: UserRepository, useClass: UserNodeRepositoryImpl },
+    // Implementación LOCAL (datos simulados con faker, sin microservicio)
+    // { provide: UserRepository, useClass: UserLocalRepositoryImpl },
   ],
 })
 export class UsersPage implements OnInit {

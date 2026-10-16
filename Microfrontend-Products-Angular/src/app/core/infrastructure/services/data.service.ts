@@ -27,7 +27,7 @@ export class DataService {
   /** Cliente HTTP de Angular. */
   private httpClient = inject(HttpClient);
 
-  /** URL base del microservicio de productos (Microservice-Products-NodeJS). */
+  /** URL base del microservicio de productos (Microservice-Products-SpringBoot). */
   private readonly nodeUrl = `${environment.baseUrl}/api`;
 
   /** Categorías disponibles para la generación de datos locales. */
