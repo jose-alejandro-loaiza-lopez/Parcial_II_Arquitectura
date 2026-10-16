@@ -15,7 +15,7 @@ export class MoviesRoutes {
      * /api/movies/{countMovies}:
      *   get:
      *     summary: Obtener listado de películas
-     *     description: Retorna una lista de películas generadas dinámicamente según la cantidad solicitada.
+     *     description: Retorna hasta la cantidad solicitada de películas del conjunto de datos.
      *     tags:
      *       - Movies
      *     parameters:
@@ -27,10 +27,10 @@ export class MoviesRoutes {
      *           minimum: 1
      *           maximum: 100
      *           example: 10
-     *         description: Cantidad de películas a generar (1 a 100)
+     *         description: Cantidad de películas a listar (1 a 100)
      *     responses:
      *       200:
-     *         description: Lista de películas generadas
+     *         description: Lista de películas del conjunto de datos
      *         content:
      *           application/json:
      *             schema:
@@ -47,7 +47,7 @@ export class MoviesRoutes {
      * /api/movies/id/{id}:
      *   get:
      *     summary: Obtener una película por id
-     *     description: Retorna una película generada dinámicamente con el identificador solicitado.
+     *     description: Retorna la película del conjunto de datos con el identificador solicitado.
      *     tags:
      *       - Movies
      *     parameters:
@@ -68,6 +68,12 @@ export class MoviesRoutes {
      *               $ref: '#/components/schemas/Movie'
      *       400:
      *         description: Parámetro inválido
+     *       404:
+     *         description: Película no encontrada
+     *         content:
+     *           application/json:
+     *             schema:
+     *               $ref: '#/components/schemas/Error'
      */
     router.get('/id/:id', Container.moviesController.getMovieById);
 
@@ -76,7 +82,7 @@ export class MoviesRoutes {
      * /api/movies/genre/{genre}:
      *   get:
      *     summary: Obtener películas por género
-     *     description: Retorna una lista de películas generadas dinámicamente para el género solicitado.
+     *     description: Retorna las películas del conjunto de datos que pertenecen al género solicitado.
      *     tags:
      *       - Movies
      *     parameters:
