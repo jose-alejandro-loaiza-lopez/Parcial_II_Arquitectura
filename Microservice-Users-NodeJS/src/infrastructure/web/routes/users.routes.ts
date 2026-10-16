@@ -15,7 +15,7 @@ export class UsersRoutes {
      * /api/users/{countUsers}:
      *   get:
      *     summary: Obtener listado de usuarios
-     *     description: Retorna una lista de usuarios generados dinámicamente según la cantidad solicitada.
+     *     description: Retorna hasta la cantidad solicitada de usuarios del conjunto de datos.
      *     tags:
      *       - Users
      *     parameters:
@@ -27,10 +27,10 @@ export class UsersRoutes {
      *           minimum: 1
      *           maximum: 100
      *           example: 10
-     *         description: Cantidad de usuarios a generar (1 a 100)
+     *         description: Cantidad de usuarios a listar (1 a 100)
      *     responses:
      *       200:
-     *         description: Lista de usuarios generados
+     *         description: Lista de usuarios del conjunto de datos
      *         content:
      *           application/json:
      *             schema:
@@ -47,7 +47,7 @@ export class UsersRoutes {
      * /api/users/id/{id}:
      *   get:
      *     summary: Obtener un usuario por id
-     *     description: Retorna un usuario generado dinámicamente con el identificador solicitado.
+     *     description: Retorna el usuario del conjunto de datos con el identificador solicitado.
      *     tags:
      *       - Users
      *     parameters:
@@ -68,6 +68,12 @@ export class UsersRoutes {
      *               $ref: '#/components/schemas/User'
      *       400:
      *         description: Parámetro inválido
+     *       404:
+     *         description: Usuario no encontrado
+     *         content:
+     *           application/json:
+     *             schema:
+     *               $ref: '#/components/schemas/Error'
      */
     router.get('/id/:id', Container.usersController.getUserById);
 
@@ -76,7 +82,7 @@ export class UsersRoutes {
      * /api/users/engineering/{engineering}:
      *   get:
      *     summary: Obtener usuarios por ingeniería
-     *     description: Retorna una lista de usuarios generados dinámicamente para la ingeniería solicitada.
+     *     description: Retorna los usuarios del conjunto de datos que pertenecen a la ingeniería solicitada.
      *     tags:
      *       - Users
      *     parameters:
